@@ -1,6 +1,6 @@
 # flutter_nimplayer
 
-A new Flutter plugin project.
+A Flutter plugin for netease yunxin vod player.
 
 ## Getting Started
 

@@ -18,7 +18,9 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   static String url =
-      'http://jdvodma74obxu.vod.126.net/jdvodma74obxu/9e4cHOd2_4901711695_hd.m3u8?wsSecret=61c0928f85e5e0a948cde99a08c55514&wsTime=1665373533';
+      'http://jdvodma74obxu.vod.126.net/jdvodma74obxu/9e4cHOd2_4901711695_hd.m3u8?wsSecret=0a7b022f07a8ff5dab8d32f47db67849&wsTime=1665382541';
+
+  bool fullscreenMode = false;
 
   FlutterNimplayer? videoPlayer;
   int _videoViewId = -1;
@@ -99,136 +101,153 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(title: const Text('flutter_nimplayer example')),
-        body: Stack(
-          children: [
-            NimplayerView(
-              onCreated: (viewId) {
-                initAndPlay(viewId);
-              },
-              x: 0,
-              y: 0,
-              width: 400,
-              height: 220,
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                toggleVideoControlBar();
-              },
-            ),
-            if (videoLoading)
-              Center(
-                  child: TranslucentContainer(
-                      padding: const EdgeInsets.all(8),
-                      child: Theme(
-                          data: ThemeData(
-                              cupertinoOverrideTheme: const CupertinoThemeData(
-                                  brightness: Brightness.dark)),
-                          child: const CupertinoActivityIndicator()))),
-            if (videoControlVisible)
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: Container(
-                  color: Colors.black38,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      IconButton(
-                          onPressed: () {
-                            toggleVideoPlayAndPause();
-                          },
-                          icon: Icon(
-                              videoPlaying ? Icons.pause : Icons.play_arrow,
-                              color: Colors.white,
-                              size: 24)),
-                      SizedBox(
-                        width: 35,
-                        child: Text(
-                          videoPlayedTime,
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 11),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 40,
-                        child: Text(
-                          '/ $videoTotalTime',
-                          style:
-                              TextStyle(color: Colors.grey[400], fontSize: 11),
-                        ),
-                      ),
-                      Expanded(
-                        child: SliderTheme(
-                            data: const SliderThemeData(
-                              trackHeight: 2,
-                              thumbColor: Colors.white,
-                              thumbShape: RoundSliderThumbShape(
-                                enabledThumbRadius: 5,
-                                pressedElevation: 2,
+        body: Builder(builder: (context) {
+          var width = MediaQuery.of(context).size.width;
+          var height = MediaQuery.of(context).size.height;
+          if (!fullscreenMode) {
+            height = width * 9 / 16;
+          }
+          return RotatedBox(
+            quarterTurns: fullscreenMode ? 45 : 0,
+            child: SizedBox(
+              width: fullscreenMode ? height : width,
+              height: fullscreenMode ? width : height,
+              child: Stack(
+                children: [
+                  NimplayerView(
+                    onCreated: (viewId) {
+                      initAndPlay(viewId);
+                    },
+                    x: 0,
+                    y: 0,
+                    width: width,
+                    height: height,
+                  ),
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      toggleVideoControlBar();
+                    },
+                  ),
+                  if (videoLoading)
+                    Center(
+                        child: TranslucentContainer(
+                            padding: const EdgeInsets.all(8),
+                            child: Theme(
+                                data: ThemeData(
+                                    cupertinoOverrideTheme:
+                                        const CupertinoThemeData(
+                                            brightness: Brightness.dark)),
+                                child: const CupertinoActivityIndicator()))),
+                  if (videoControlVisible)
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: Container(
+                        color: Colors.black38,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  toggleVideoPlayAndPause();
+                                },
+                                icon: Icon(
+                                    videoPlaying
+                                        ? Icons.pause
+                                        : Icons.play_arrow,
+                                    color: Colors.white,
+                                    size: 24)),
+                            SizedBox(
+                              width: 35,
+                              child: Text(
+                                videoPlayedTime,
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 11),
                               ),
                             ),
-                            child: Slider(
-                              value: videoPosition,
-                              activeColor: Colors.blue,
-                              inactiveColor: const Color(0xFF929BA2),
-                              onChanged: (value) {
-                                slideTo(value);
-                              },
-                              onChangeEnd: (double value) {
-                                seekTo(value);
-                              },
-                            )),
-                      ),
-                      // if (canGoFullscreen)
-                      //   IconButton(
-                      //       onPressed: onToggleFullscreen,
-                      //       icon: Icon(
-                      //         fullscreenMode ? Icons.fullscreen_exit : Icons.fullscreen,
-                      //         color: Colors.white,
-                      //         size: 24,
-                      //       )),
-                      // if (!canGoFullscreen)
-                      //   SizedBox(
-                      //     width: 40,
-                      //     child: Text(
-                      //       videoController.videoTotalTime.value,
-                      //       style: TextStyle(color: Colors.grey[400], fontSize: 11),
-                      //     ),
-                      //   ),
-                      // SizedBox(
-                      //     width:
-                      //     fullscreenMode ? MediaQuery.of(context).padding.bottom : 0),
-                    ],
-                  ),
-                ),
-              ),
-            if (videoEnded)
-              Center(
-                child: GestureDetector(
-                  onTap: () {
-                    replayVideo();
-                  },
-                  child: TranslucentContainer(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: const [
-                        Icon(
-                          Icons.replay,
-                          color: Colors.white,
-                          size: 30,
+                            SizedBox(
+                              width: 40,
+                              child: Text(
+                                '/ $videoTotalTime',
+                                style: TextStyle(
+                                    color: Colors.grey[400], fontSize: 11),
+                              ),
+                            ),
+                            Expanded(
+                              child: SliderTheme(
+                                  data: const SliderThemeData(
+                                    trackHeight: 2,
+                                    thumbColor: Colors.white,
+                                    thumbShape: RoundSliderThumbShape(
+                                      enabledThumbRadius: 5,
+                                      pressedElevation: 2,
+                                    ),
+                                  ),
+                                  child: Slider(
+                                    value: videoPosition,
+                                    activeColor: Colors.blue,
+                                    inactiveColor: const Color(0xFF929BA2),
+                                    onChanged: (value) {
+                                      slideTo(value);
+                                    },
+                                    onChangeEnd: (double value) {
+                                      seekTo(value);
+                                    },
+                                  )),
+                            ),
+                            // if (canGoFullscreen)
+                            //   IconButton(
+                            //       onPressed: onToggleFullscreen,
+                            //       icon: Icon(
+                            //         fullscreenMode ? Icons.fullscreen_exit : Icons.fullscreen,
+                            //         color: Colors.white,
+                            //         size: 24,
+                            //       )),
+                            // if (!canGoFullscreen)
+                            //   SizedBox(
+                            //     width: 40,
+                            //     child: Text(
+                            //       videoController.videoTotalTime.value,
+                            //       style: TextStyle(color: Colors.grey[400], fontSize: 11),
+                            //     ),
+                            //   ),
+                            // SizedBox(
+                            //     width:
+                            //     fullscreenMode ? MediaQuery.of(context).padding.bottom : 0),
+                          ],
                         ),
-                        SizedBox(height: 4),
-                        Text('Replay', style: TextStyle(color: Colors.white)),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
+                  if (videoEnded)
+                    Center(
+                      child: GestureDetector(
+                        onTap: () {
+                          replayVideo();
+                        },
+                        child: TranslucentContainer(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: const [
+                              Icon(
+                                Icons.replay,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                              SizedBox(height: 4),
+                              Text('Replay',
+                                  style: TextStyle(color: Colors.white)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
-          ],
-        ),
+            ),
+          );
+        }),
       ),
     );
   }

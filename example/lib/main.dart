@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_nimplayer/flutter_nimplayer.dart';
 import 'package:flutter_nimplayer_example/ext/int.dart';
@@ -17,7 +18,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   static String url =
-      'http://jdvodma74obxu.vod.126.net/jdvodma74obxu/9e4cHOd2_4901711695_hd.m3u8?wsSecret=42ae6941407a96565e059314eba69d61&wsTime=1665311038';
+      'http://jdvodma74obxu.vod.126.net/jdvodma74obxu/9e4cHOd2_4901711695_hd.m3u8?wsSecret=61c0928f85e5e0a948cde99a08c55514&wsTime=1665373533';
 
   FlutterNimplayer? videoPlayer;
   int _videoViewId = -1;
@@ -46,23 +47,34 @@ class _MyAppState extends State<MyApp> {
       setState(() {
         videoTotalTime = _videoLength.millisecondsToTimeString();
       });
+
+      videoPlayer!.setOnLoadingStatusListener(
+          loadingBegin: (playerId) {
+            setState(() {
+              videoLoading = true;
+            });
+          },
+          loadingProgress: (playerId, percent) {
+            if (percent > 70) {
+              videoLoading = false;
+            }
+          },
+          loadingEnd: (playerId) {});
+
+      videoPlayer!.setOnCompletion((playerId, code, extra) {
+        setState(() {
+          videoPosition = 1;
+          videoEnded = true;
+          videoPlaying = false;
+          videoControlVisible = false;
+        });
+      });
     });
 
-    videoPlayer!.setOnLoadingStatusListener(
-        loadingBegin: (playerId) {
-          setState(() {
-            videoLoading = true;
-          });
-        },
-        loadingProgress: (playerId, percent) {},
-        loadingEnd: (playerId) {
-          setState(() {
-            videoLoading = false;
-          });
-        });
-
-    videoPlayer?.setOnCurrentPosition((playerId, pos) {
-      if (!_slidingInProgress) {
+    Timer.periodic(const Duration(milliseconds: 200), (timer) async {
+      int pos = 0;
+      if (!_slidingInProgress && videoPlaying) {
+        pos = await videoPlayer?.getCurrentPosition() ?? 0;
         double newPosition = pos / _videoLength;
         if (newPosition < 0) {
           newPosition = 0;
@@ -72,23 +84,14 @@ class _MyAppState extends State<MyApp> {
         setState(() {
           videoPosition = newPosition;
         });
-      }
 
-      String newPosition = pos.millisecondsToTimeString();
-      if (newPosition != videoPlayedTime) {
-        setState(() {
-          videoPlayedTime = newPosition;
-        });
+        String newTime = pos.millisecondsToTimeString();
+        if (newTime != videoPlayedTime) {
+          setState(() {
+            videoPlayedTime = newTime;
+          });
+        }
       }
-    });
-
-    videoPlayer!.setOnCompletion((playerId, code, extra) {
-      setState(() {
-        videoPosition = 1;
-        videoEnded = true;
-        videoPlaying = false;
-        videoControlVisible = false;
-      });
     });
   }
 
@@ -114,6 +117,15 @@ class _MyAppState extends State<MyApp> {
                 toggleVideoControlBar();
               },
             ),
+            if (videoLoading)
+              Center(
+                  child: TranslucentContainer(
+                      padding: const EdgeInsets.all(8),
+                      child: Theme(
+                          data: ThemeData(
+                              cupertinoOverrideTheme: const CupertinoThemeData(
+                                  brightness: Brightness.dark)),
+                          child: const CupertinoActivityIndicator()))),
             if (videoControlVisible)
               Positioned(
                 left: 0,
@@ -199,12 +211,7 @@ class _MyAppState extends State<MyApp> {
                   onTap: () {
                     replayVideo();
                   },
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.black38,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
+                  child: TranslucentContainer(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: const [
@@ -295,12 +302,42 @@ class _MyAppState extends State<MyApp> {
   }
 
   void replayVideo() {
-    initAndPlay(_videoViewId);
-
     setState(() {
       videoPosition = 0;
       videoPlayedTime = '00:00';
       videoEnded = false;
     });
+
+    toggleVideoPlayAndPause();
+  }
+}
+
+class TranslucentContainer extends StatelessWidget {
+  const TranslucentContainer(
+      {Key? key,
+      this.padding = const EdgeInsets.all(8),
+      this.translucentColor = Colors.black38,
+      this.borderRadius = 5,
+      required this.child})
+      : super(key: key);
+
+  final EdgeInsetsGeometry padding;
+
+  final Color translucentColor;
+
+  final double borderRadius;
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: padding,
+      decoration: BoxDecoration(
+        color: translucentColor,
+        borderRadius: BorderRadius.circular(borderRadius),
+      ),
+      child: child,
+    );
   }
 }

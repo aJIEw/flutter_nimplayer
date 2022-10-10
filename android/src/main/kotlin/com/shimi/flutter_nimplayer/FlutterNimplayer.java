@@ -113,6 +113,9 @@ public class FlutterNimplayer extends FlutterPlayerBase {
             case "getDuration":
                 result.success(getDuration(mPlayer));
                 break;
+            case "getCurrentPosition":
+                result.success(getCurrentPosition(mPlayer));
+                break;
             case "snapshot":
                 mSnapShotPath = methodCall.argument("arg").toString();
                 snapshot(mPlayer);
@@ -243,6 +246,13 @@ public class FlutterNimplayer extends FlutterPlayerBase {
     private long getDuration(NELivePlayer mPlayer) {
         if (mPlayer != null) {
             return mPlayer.getDuration();
+        }
+        return 0;
+    }
+
+    private long getCurrentPosition(NELivePlayer mPlayer) {
+        if (mPlayer != null) {
+            return mPlayer.getCurrentPosition();
         }
         return 0;
     }

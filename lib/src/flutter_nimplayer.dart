@@ -97,6 +97,11 @@ class FlutterNimplayer {
         .invokeMethod("getDuration", _wrapWithPlayerId());
   }
 
+  Future<dynamic> getCurrentPosition() async {
+    return FlutterNimplayerFactory.methodChannel
+        .invokeMethod("getCurrentPosition", _wrapWithPlayerId());
+  }
+
   Future<dynamic> snapshot(String path) async {
     return FlutterNimplayerFactory.methodChannel
         .invokeMethod('snapshot', _wrapWithPlayerId(arg: path));

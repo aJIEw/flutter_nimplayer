@@ -137,10 +137,6 @@ class FlutterNimplayer {
         .invokeMethod('setVolume', _wrapWithPlayerId(arg: volume));
   }
 
-  Future<String?> getPlatformVersion() {
-    return FlutterNimplayerPlatform.instance.getPlatformVersion();
-  }
-
   void register() {
     eventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
   }

@@ -8,8 +8,13 @@
 #import "flutter_nimplayer-Swift.h"
 #endif
 
+#import "NimPlayerFactory.h"
+
+
 @implementation FlutterNimplayerPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  [SwiftFlutterNimplayerPlugin registerWithRegistrar:registrar];
+    NimPlayerFactory* factory =
+      [[NimPlayerFactory alloc] initWithMessenger:registrar.messenger];
+    [registrar registerViewFactory:factory withId:@"flutter_nimplayer_render_view"];
 }
 @end

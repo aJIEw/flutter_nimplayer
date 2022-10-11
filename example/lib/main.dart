@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_nimplayer/flutter_nimplayer.dart';
 import 'package:flutter_nimplayer_example/ext/int.dart';
@@ -17,8 +18,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  static String url =
-      'http://jdvodma74obxu.vod.126.net/jdvodma74obxu/9e4cHOd2_4901711695_hd.m3u8?wsSecret=0a7b022f07a8ff5dab8d32f47db67849&wsTime=1665382541';
+  String url =
+      'http://jdvodma74obxu.vod.126.net/jdvodma74obxu/9e4cHOd2_4901711695_hd.m3u8?wsSecret=cd95e362cc70545582cf416bdd42ab8c&wsTime=1665477643';
 
   bool fullscreenMode = false;
 
@@ -69,6 +70,10 @@ class _MyAppState extends State<MyApp> {
           videoEnded = true;
           videoPlaying = false;
           videoControlVisible = false;
+        });
+
+        videoPlayer!.setOnError((playerId, code, extra) {
+          print('_MyAppState - initState: playerId = $playerId, code = $code, extra = $extra');
         });
       });
     });

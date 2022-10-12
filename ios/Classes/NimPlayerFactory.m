@@ -72,20 +72,19 @@
                                             viewIdentifier:(int64_t)viewId
                                                  arguments:(id _Nullable)args {
     NSString *viewIdKey = [NSString stringWithFormat:@"%lli",viewId];
-    FlutterNimPlayerView *fapv = [_viewDic objectForKey:viewIdKey];
-    if (fapv) {
-        //更新参数
-        [fapv updateWithWithFrame:frame arguments:args];
+    FlutterNimPlayerView *fnpv = [_viewDic objectForKey:viewIdKey];
+    if (fnpv) {
+        [fnpv updateWithWithFrame:frame arguments:args];
     }else{
-        fapv =
+        fnpv =
         [[FlutterNimPlayerView alloc] initWithWithFrame:frame
                                          viewIdentifier:viewId
                                               arguments:args
                                         binaryMessenger:_messenger];
-        [_viewDic setObject:fapv forKey:viewIdKey];
+        [_viewDic setObject:fnpv forKey:viewIdKey];
     }
     
-    return fapv;
+    return fnpv;
 }
 
 - (void)onMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result atObj:(NSObject*)player arg:(NSObject*)arg{
@@ -120,8 +119,9 @@
     FlutterResult result = arr[1];
     NimPlayerProxy *proxy = arr[2];
     NSNumber* viewId = arr[3];
-    FlutterNimPlayerView *fapv = [_viewDic objectForKey:[NSString stringWithFormat:@"%@",viewId]];
-    [proxy bindPlayerView:fapv];
+    FlutterNimPlayerView *fnpv = [_viewDic objectForKey:[NSString stringWithFormat:@"%@",viewId]];
+    [proxy bindPlayerView:fnpv];
+    [proxy doInitPlayerNotification];
     result(nil);
 }
 
@@ -165,8 +165,8 @@
         [_playerProxyDic removeObjectForKey:proxy.playerId];
     }
     
-    if (proxy.fapv) {
-        NSString *viewId = [NSString stringWithFormat:@"%li",(long)proxy.fapv.viewId];
+    if (proxy.fnpv) {
+        NSString *viewId = [NSString stringWithFormat:@"%li",(long)proxy.fnpv.viewId];
         if ([_viewDic objectForKey:viewId]) {
             [_viewDic removeObjectForKey:viewId];
         }
@@ -174,12 +174,26 @@
     result(nil);
 }
 
+- (void)getDuration:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    NimPlayerProxy *proxy = arr[2];
+    __block NSInteger duration = [proxy.player duration]; // 单位是秒
+    result(@((int)duration * 1000)); // 转换成毫秒返回
+}
+
+- (void)getCurrentPosition:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    NimPlayerProxy *proxy = arr[2];
+    __block NSInteger position = [proxy.player currentPlaybackTime];
+    result(@((int)position * 1000));
+}
+
 - (void)seekTo:(NSArray*)arr {
     FlutterResult result = arr[1];
     NimPlayerProxy *proxy = arr[2];
     NSDictionary* dic = arr[3];
-    NSNumber *position = dic[@"position"];
-    [proxy.player setCurrentPlaybackTime:position.integerValue];
+    NSNumber *position = dic[@"position"]; // 单位是毫秒
+    [proxy.player setCurrentPlaybackTime:(int)([position doubleValue] / 1000)]; // 设置时需要先转换成秒
     result(nil);
 }
 

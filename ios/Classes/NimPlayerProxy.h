@@ -16,9 +16,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic,strong) NSString *playerId;
 
-@property(nonatomic,strong) FlutterNimPlayerView *fapv;
+@property(nonatomic,strong) FlutterNimPlayerView *fnpv;
 
--(void)bindPlayerView:(FlutterNimPlayerView*)fapv;
+-(void)doInitPlayerNotification;
+
+-(void)bindPlayerView:(FlutterNimPlayerView*)fnpv;
 
 @end
 

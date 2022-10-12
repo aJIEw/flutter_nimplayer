@@ -19,7 +19,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String url =
-      'http://jdvodma74obxu.vod.126.net/jdvodma74obxu/9e4cHOd2_4901711695_hd.m3u8?wsSecret=cd95e362cc70545582cf416bdd42ab8c&wsTime=1665477643';
+      'http://jdvodma74obxu.vod.126.net/jdvodma74obxu/9e4cHOd2_4901711695_hd.m3u8?wsSecret=f990f407b0e5bcca610dcb6c52020f37&wsTime=1665538963';
 
   bool fullscreenMode = false;
 
@@ -125,8 +125,8 @@ class _MyAppState extends State<MyApp> {
                     },
                     x: 0,
                     y: 0,
-                    width: width,
-                    height: height,
+                    width: fullscreenMode ? height : width,
+                    height: fullscreenMode ? width : height,
                   ),
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
@@ -146,8 +146,8 @@ class _MyAppState extends State<MyApp> {
                                 child: const CupertinoActivityIndicator()))),
                   if (videoControlVisible)
                     Positioned(
-                      left: 0,
-                      right: 0,
+                      left: fullscreenMode ? 50 : 0,
+                      right: fullscreenMode ? 50 : 0,
                       bottom: 0,
                       child: Container(
                         color: Colors.black38,

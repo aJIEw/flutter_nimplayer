@@ -4,7 +4,6 @@ import com.netease.neliveplayer.sdk.NELivePlayer;
 import com.netease.neliveplayer.sdk.NEMediaDataSource;
 import com.netease.neliveplayer.sdk.model.NEAudioTrackInfo;
 import com.netease.neliveplayer.sdk.model.NEDataSourceConfig;
-import com.netease.neliveplayer.sdk.model.NEMediaInfo;
 import com.netease.neliveplayer.sdk.model.NESDKConfig;
 
 import java.io.IOException;
@@ -59,57 +58,13 @@ public class FlutterNimplayer extends FlutterPlayerBase {
                 release(mPlayer);
                 result.success(null);
                 break;
-            case "seekTo": {
+            case "seekTo":
                 Map<String, Object> seekToMap = (Map<String, Object>) methodCall.argument("arg");
                 Integer position = (Integer) seekToMap.get("position");
                 Boolean seekMode = (Boolean) seekToMap.get("isAccurate");
                 seekTo(mPlayer, position.longValue(), seekMode);
                 result.success(null);
-            }
-            break;
-            /*case "getMediaInfo": {
-                MediaInfo mediaInfo = getMediaInfo(mPlayer);
-                if (mediaInfo != null) {
-                    Map<String, Object> getMediaInfoMap = new HashMap<>();
-                    getMediaInfoMap.put("title", mediaInfo.getTitle());
-                    getMediaInfoMap.put("status", mediaInfo.getStatus());
-                    getMediaInfoMap.put("mediaType", mediaInfo.getMediaType());
-                    getMediaInfoMap.put("duration", mediaInfo.getDuration());
-                    getMediaInfoMap.put("transcodeMode", mediaInfo.getTransCodeMode());
-                    getMediaInfoMap.put("coverURL", mediaInfo.getCoverUrl());
-                    List<Thumbnail> thumbnail = mediaInfo.getThumbnailList();
-                    List<Map<String, Object>> thumbailList = new ArrayList<>();
-                    for (Thumbnail thumb : thumbnail) {
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("url", thumb.mURL);
-                        thumbailList.add(map);
-                        getMediaInfoMap.put("thumbnails", thumbailList);
-                    }
-                    List<TrackInfo> trackInfos = mediaInfo.getTrackInfos();
-                    List<Map<String, Object>> trackInfoList = new ArrayList<>();
-                    for (TrackInfo trackInfo : trackInfos) {
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("vodFormat", trackInfo.getVodFormat());
-                        map.put("videoHeight", trackInfo.getVideoHeight());
-                        map.put("videoWidth", trackInfo.getVideoHeight());
-                        map.put("subtitleLanguage", trackInfo.getSubtitleLang());
-                        map.put("trackBitrate", trackInfo.getVideoBitrate());
-                        map.put("vodFileSize", trackInfo.getVodFileSize());
-                        map.put("trackIndex", trackInfo.getIndex());
-                        map.put("trackDefinition", trackInfo.getVodDefinition());
-                        map.put("audioSampleFormat", trackInfo.getAudioSampleFormat());
-                        map.put("audioLanguage", trackInfo.getAudioLang());
-                        map.put("vodPlayUrl", trackInfo.getVodPlayUrl());
-                        map.put("trackType", trackInfo.getType().ordinal());
-                        map.put("audioSamplerate", trackInfo.getAudioSampleRate());
-                        map.put("audioChannels", trackInfo.getAudioChannels());
-                        trackInfoList.add(map);
-                        getMediaInfoMap.put("tracks", trackInfoList);
-                    }
-                    result.success(getMediaInfoMap);
-                }
-            }
-            break;*/
+                break;
             case "getDuration":
                 result.success(getDuration(mPlayer));
                 break;
@@ -130,6 +85,10 @@ public class FlutterNimplayer extends FlutterPlayerBase {
                 break;
             case "setAutoPlay":
                 setAutoPlay(mPlayer, (Boolean) methodCall.argument("arg"));
+                result.success(null);
+                break;
+            case "setScalingMode":
+                setScalingMode(mPlayer, (Integer) methodCall.argument("arg"));
                 result.success(null);
                 break;
             case "setMuted":
@@ -277,6 +236,9 @@ public class FlutterNimplayer extends FlutterPlayerBase {
         if (mPlayer != null) {
             mPlayer.setShouldAutoplay(isAutoPlay);
         }
+    }
+
+    private void setScalingMode(NELivePlayer mPlayer, Integer mode) {
     }
 
     private void setMuted(NELivePlayer mPlayer, Boolean muted) {

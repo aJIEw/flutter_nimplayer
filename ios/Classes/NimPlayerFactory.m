@@ -134,10 +134,39 @@
     result(nil);
 }
 
+- (void)setAutoPlay:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    NimPlayerProxy *proxy = arr[2];
+    NSNumber* val = arr[3];
+    [proxy.player setShouldAutoplay:val.boolValue];
+    result(nil);
+}
+
+- (void)setScalingMode:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    NimPlayerProxy *proxy = arr[2];
+    NSNumber* mode = arr[3];
+    NELPMovieScalingMode scalingMode = NELPMovieScalingModeNone;
+    switch (mode.intValue) {
+        case 0:
+            scalingMode = NELPMovieScalingModeFill;
+            break;
+        case 1:
+            scalingMode = NELPMovieScalingModeAspectFit;
+            break;
+        case 2:
+            scalingMode = NELPMovieScalingModeAspectFill;
+            break;
+        default:
+            break;
+    }
+    [proxy.player setScalingMode:scalingMode];
+    result(nil);
+}
+
 - (void)prepare:(NSArray*)arr {
     FlutterResult result = arr[1];
     NimPlayerProxy *proxy = arr[2];
-//    [proxy.player setShouldAutoplay:YES];
     [proxy.player prepareToPlay];
     result(nil);
 }

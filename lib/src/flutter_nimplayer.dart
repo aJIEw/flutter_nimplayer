@@ -122,6 +122,11 @@ class FlutterNimplayer {
         .invokeMethod('setAutoPlay', _wrapWithPlayerId(arg: isAutoPlay));
   }
 
+  Future<void> setScalingMode(int scalingMode) async {
+    return FlutterNimplayerFactory.methodChannel
+        .invokeMethod('setScalingMode', _wrapWithPlayerId(arg: scalingMode));
+  }
+
   Future<void> setMuted(bool isMuted) async {
     return FlutterNimplayerFactory.methodChannel
         .invokeMethod('setMuted', _wrapWithPlayerId(arg: isMuted));

@@ -185,6 +185,15 @@
     result(nil);
 }
 
+- (void)switchContentUrl:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    NimPlayerProxy *proxy = arr[2];
+    NSString* urlString = arr[3];
+    NSURL* url = [NSURL URLWithString:urlString];
+    [proxy.player switchContentUrl:url];
+    result(nil);
+}
+
 - (void)destroy:(NSArray*)arr {
     FlutterResult result = arr[1];
     NimPlayerProxy *proxy = arr[2];

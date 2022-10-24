@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
@@ -47,6 +48,7 @@ public class FlutterNimplayerView implements PlatformView {
     @Override
     public void dispose() {
         if (mFlutterNimPlayerViewListener != null) {
+            mPlayer.setSurface(null);
             mFlutterNimPlayerViewListener.onDispose(mViewId);
         }
     }
@@ -56,6 +58,7 @@ public class FlutterNimplayerView implements PlatformView {
             mTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
                 @Override
                 public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+                    Log.d(FlutterNimplayerView.class.getSimpleName(), "onSurfaceTextureAvailable: ");
                     mSurface = new Surface(surface);
                     mHandler.sendEmptyMessage(NIM_PLAYER_SETSURFACE);
                     /*if (mPlayer != null) {
@@ -65,16 +68,19 @@ public class FlutterNimplayerView implements PlatformView {
 
                 @Override
                 public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+                    Log.d(FlutterNimplayerView.class.getSimpleName(), "onSurfaceTextureSizeChanged: ");
                     /*if (mPlayer != null) {
-                        mPlayer.setSurface(mSurface);
+                        mSurface = new Surface(surface);
+                        mHandler.sendEmptyMessage(NIM_PLAYER_SETSURFACE);
                     }*/
                 }
 
                 @Override
                 public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-                    if (mPlayer != null) {
+                    Log.d(FlutterNimplayerView.class.getSimpleName(), "onSurfaceTextureDestroyed: ");
+                    /*if (mPlayer != null) {
                         mPlayer.setSurface(null);
-                    }
+                    }*/
                     return false;
                 }
 

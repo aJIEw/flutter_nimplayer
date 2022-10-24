@@ -50,6 +50,11 @@ public class FlutterNimplayer extends FlutterPlayerBase {
                 pause(mPlayer);
                 result.success(null);
                 break;
+            case "switchContentUrl":
+                String switchUrl = methodCall.argument("arg");
+                switchContentUrl(mPlayer, switchUrl);
+                result.success(null);
+                break;
             case "stop":
                 stop(mPlayer);
                 result.success(null);
@@ -178,6 +183,12 @@ public class FlutterNimplayer extends FlutterPlayerBase {
     private void pause(NELivePlayer mPlayer) {
         if (mPlayer != null) {
             mPlayer.pause();
+        }
+    }
+
+    private void switchContentUrl(NELivePlayer mPlayer, String url) {
+        if (mPlayer != null) {
+            mPlayer.switchContentUrl(url);
         }
     }
 

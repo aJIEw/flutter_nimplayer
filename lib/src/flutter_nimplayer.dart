@@ -75,6 +75,11 @@ class FlutterNimplayer {
         .invokeMethod('pause', _wrapWithPlayerId());
   }
 
+  Future<void> switchContentUrl(String url) async {
+    return FlutterNimplayerFactory.methodChannel
+        .invokeMethod('switchContentUrl', _wrapWithPlayerId(arg: url));
+  }
+
   Future<void> stop() async {
     return FlutterNimplayerFactory.methodChannel
         .invokeMethod('stop', _wrapWithPlayerId());

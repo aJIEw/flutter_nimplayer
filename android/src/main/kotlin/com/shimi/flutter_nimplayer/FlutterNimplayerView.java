@@ -48,7 +48,7 @@ public class FlutterNimplayerView implements PlatformView {
     @Override
     public void dispose() {
         if (mFlutterNimPlayerViewListener != null) {
-            mPlayer.setSurface(null);
+            //mPlayer.setSurface(null);
             mFlutterNimPlayerViewListener.onDispose(mViewId);
         }
     }

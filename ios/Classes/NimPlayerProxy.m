@@ -126,6 +126,7 @@
 
 - (void)NELivePlayerSeekComplete:(NSNotification*)notification {
     NSLog(@"[FlutterNimPlayer] 收到 NELivePlayerMoviePlayerSeekCompletedNotification 通知");
+    self.eventSink(@{kNimPlayerMethod:@"onSeekComplete",kNimPlayerId:_playerId});
 }
 
 - (void)NELivePlayerReleaseSuccess:(NSNotification*)notification {

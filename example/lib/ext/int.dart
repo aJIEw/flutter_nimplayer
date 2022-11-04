@@ -1,7 +1,6 @@
 import 'package:sprintf/sprintf.dart';
 
 extension IntExtension on int {
-
   String millisecondsToTimeString({bool ignoreHours = false}) {
     int totalSeconds = this ~/ 1000;
     int seconds = totalSeconds % 60;
@@ -14,5 +13,4 @@ extension IntExtension on int {
         ? sprintf.call("%02i:%02i:%02i", [hours, minutes, seconds])
         : sprintf.call("%02d:%02d", [minutes, seconds]);
   }
-
 }

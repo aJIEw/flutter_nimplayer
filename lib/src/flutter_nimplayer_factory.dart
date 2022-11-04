@@ -6,6 +6,7 @@ class FlutterNimplayerFactory {
 
   static Map<String, FlutterNimplayer> instanceMap = {};
 
+  /// 创建播放器
   static FlutterNimplayer createPlayer({playerId}) {
     FlutterNimplayer player = FlutterNimplayer.init(playerId);
     player.create();

@@ -2,7 +2,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_nimplayer/flutter_nimplayer.dart';
 
 import 'flutter_nimplayer_factory.dart';
-import 'flutter_nimplayer_platform_interface.dart';
 
 typedef OnPlayerEvent = void Function(String playerId);
 typedef OnPlayerProgress = void Function(String playerId, int percent);
@@ -50,58 +49,69 @@ class FlutterNimplayer {
         'createPlayer', _wrapWithPlayerId(arg: PlayerType.playerTypeSingle));
   }
 
+  /// 和播放器视图建立连接
   Future<void> setPlayerView(int viewId) async {
     return FlutterNimplayerFactory.methodChannel
         .invokeMethod('setPlayerView', _wrapWithPlayerId(arg: viewId));
   }
 
+  /// 设置播放 url
   Future<void> setUrl(String url) async {
     return FlutterNimplayerFactory.methodChannel
         .invokeMethod('setUrl', _wrapWithPlayerId(arg: url));
   }
 
+  /// 准备播放，只有在调用该方法后才能收到 [onPrepared] 回调
   Future<void> prepare() async {
     return FlutterNimplayerFactory.methodChannel
         .invokeMethod('prepare', _wrapWithPlayerId());
   }
 
-  Future<void> play() async {
-    return FlutterNimplayerFactory.methodChannel
-        .invokeMethod('play', _wrapWithPlayerId());
-  }
-
-  Future<void> pause() async {
-    return FlutterNimplayerFactory.methodChannel
-        .invokeMethod('pause', _wrapWithPlayerId());
-  }
-
+  /// 切换播放 url，只有在开始播放后调用该方法才会生效
   Future<void> switchContentUrl(String url) async {
     return FlutterNimplayerFactory.methodChannel
         .invokeMethod('switchContentUrl', _wrapWithPlayerId(arg: url));
   }
 
+  /// 播放
+  Future<void> play() async {
+    return FlutterNimplayerFactory.methodChannel
+        .invokeMethod('play', _wrapWithPlayerId());
+  }
+
+  /// 暂停
+  Future<void> pause() async {
+    return FlutterNimplayerFactory.methodChannel
+        .invokeMethod('pause', _wrapWithPlayerId());
+  }
+
+  /// 停止播放
   Future<void> stop() async {
     return FlutterNimplayerFactory.methodChannel
         .invokeMethod('stop', _wrapWithPlayerId());
   }
 
+  /// 销毁播放器资源
   Future<void> destroy() async {
     FlutterNimplayerFactory.instanceMap.remove(playerId);
     return FlutterNimplayerFactory.methodChannel
         .invokeMethod('destroy', _wrapWithPlayerId());
   }
 
+  /// 移动到播放位置，单位 milliseconds
   Future<void> seekTo(int position, bool isAccurate) async {
     var map = {"position": position, "isAccurate": isAccurate};
     return FlutterNimplayerFactory.methodChannel
         .invokeMethod("seekTo", _wrapWithPlayerId(arg: map));
   }
 
+  /// 获取资源长度，通常在 [onPrepared] 中调用
   Future<dynamic> getDuration() async {
     return FlutterNimplayerFactory.methodChannel
         .invokeMethod("getDuration", _wrapWithPlayerId());
   }
 
+  /// 获取当前播放位置，iOS 上只支持查询到秒
   Future<dynamic> getCurrentPosition() async {
     return FlutterNimplayerFactory.methodChannel
         .invokeMethod("getCurrentPosition", _wrapWithPlayerId());
@@ -122,11 +132,18 @@ class FlutterNimplayer {
         .invokeMethod('setLoop', _wrapWithPlayerId(arg: isLoop));
   }
 
+  /// 设置是否在准备完成后自动播放，默认开启
   Future<void> setAutoPlay(bool isAutoPlay) async {
     return FlutterNimplayerFactory.methodChannel
         .invokeMethod('setAutoPlay', _wrapWithPlayerId(arg: isAutoPlay));
   }
 
+  /// 设置画面拉伸模式，仅支持 iOS，
+  /// 0: 不保持比例平铺
+  /// 1: 保持比例缩放，缺少的部分使用黑边填充
+  /// 2: 保持比例填充，多余的部分会被裁剪
+  ///
+  /// 安卓上不支持缩放，默认为不保持比例平铺
   Future<void> setScalingMode(int scalingMode) async {
     return FlutterNimplayerFactory.methodChannel
         .invokeMethod('setScalingMode', _wrapWithPlayerId(arg: scalingMode));
@@ -151,11 +168,12 @@ class FlutterNimplayer {
     eventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
   }
 
-  /// 设置回调
+  /// 资源准备成功回调
   void setOnPrepared(OnPlayerEvent prepared) {
     onPrepared = prepared;
   }
 
+  /// 加载状态回调，播放进度回调只支持安卓
   void setOnLoadingStatusListener(
       {required OnPlayerEvent loadingBegin,
       required OnPlayerProgress loadingProgress,
@@ -165,34 +183,42 @@ class FlutterNimplayer {
     onLoadingEnd = loadingEnd;
   }
 
-  void setOnVideoSizeChanged(OnVideoSizeChanged videoSizeChanged) {
-    onVideoSizeChanged = videoSizeChanged;
-  }
-
+  /// 位移成功后的回调
   void setOnSeekComplete(OnPlayerEvent seekComplete) {
     onSeekComplete = seekComplete;
   }
 
-  void setOnCurrentPosition(OnPlayerProgress onCurrentPosition) {
-    this.onCurrentPosition = onCurrentPosition;
-  }
-
-  void setOnInfo(OnPlaybackCallback onInfo) {
-    this.onInfo = onInfo;
-  }
-
+  /// 视频播放结束回调
   void setOnCompletion(OnPlaybackCallback onCompletion) {
     this.onCompletion = onCompletion;
   }
 
+  /// 视频播放出错回调，安卓上，回调信息中包含 errorCode 和 errorExtra
   void setOnError(OnPlaybackCallback onError) {
     this.onError = onError;
   }
 
+  /// 视频大小变化回调，仅支持安卓
+  void setOnVideoSizeChanged(OnVideoSizeChanged videoSizeChanged) {
+    onVideoSizeChanged = videoSizeChanged;
+  }
+
+  /// 当前播放位置回调，仅支持安卓
+  void setOnCurrentPosition(OnPlayerProgress onCurrentPosition) {
+    this.onCurrentPosition = onCurrentPosition;
+  }
+
+  /// 视频信息回调，仅支持安卓
+  void setOnInfo(OnPlaybackCallback onInfo) {
+    this.onInfo = onInfo;
+  }
+
+  /// 字幕展示回调，仅支持安卓
   void setOnSubtitleShow(OnSubtitleShow onSubtitleShow) {
     this.onSubtitleShow = onSubtitleShow;
   }
 
+  /// 字幕隐藏回调，仅支持安卓
   void setOnSubtitleHide(OnSubtitleHide onSubtitleHide) {
     this.onSubtitleHide = onSubtitleHide;
   }

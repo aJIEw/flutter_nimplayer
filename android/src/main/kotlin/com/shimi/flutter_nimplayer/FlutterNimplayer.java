@@ -7,6 +7,7 @@ import com.netease.neliveplayer.sdk.model.NEDataSourceConfig;
 import com.netease.neliveplayer.sdk.model.NESDKConfig;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -75,6 +76,9 @@ public class FlutterNimplayer extends FlutterPlayerBase {
                 break;
             case "getCurrentPosition":
                 result.success(getCurrentPosition(mPlayer));
+                break;
+            case "getVideoSize":
+                result.success(getVideoSize(mPlayer));
                 break;
             case "snapshot":
                 mSnapShotPath = methodCall.argument("arg").toString();
@@ -225,6 +229,15 @@ public class FlutterNimplayer extends FlutterPlayerBase {
             return mPlayer.getCurrentPosition();
         }
         return 0;
+    }
+
+    private Map<String, Integer> getVideoSize(NELivePlayer mPlayer) {
+        Map<String, Integer> map = new HashMap<>();
+        if (mPlayer != null) {
+            map.put("width", mPlayer.getVideoWidth());
+            map.put("height", mPlayer.getVideoHeight());
+        }
+        return map;
     }
 
     private void snapshot(NELivePlayer mPlayer) {

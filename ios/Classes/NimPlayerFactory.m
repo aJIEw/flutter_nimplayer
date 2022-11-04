@@ -226,6 +226,17 @@
     result(@((int)position * 1000));
 }
 
+- (void)getVideoSize:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    NimPlayerProxy *proxy = arr[2];
+
+    NELPVideoInfo info;
+    memset(&info, 0, sizeof(NELPVideoInfo));
+    [proxy.player getVideoInfo:&info];
+
+    result(@{@"width": @(info.width), @"height": @(info.height)});
+}
+
 - (void)seekTo:(NSArray*)arr {
     FlutterResult result = arr[1];
     NimPlayerProxy *proxy = arr[2];

@@ -117,6 +117,12 @@ class FlutterNimplayer {
         .invokeMethod("getCurrentPosition", _wrapWithPlayerId());
   }
 
+  /// 获取视频大小，返回 map = {'width': x, 'height': x}
+  Future<dynamic> getVideoSize() async {
+    return FlutterNimplayerFactory.methodChannel
+        .invokeMethod("getVideoSize", _wrapWithPlayerId());
+  }
+
   Future<dynamic> snapshot(String path) async {
     return FlutterNimplayerFactory.methodChannel
         .invokeMethod('snapshot', _wrapWithPlayerId(arg: path));
@@ -143,7 +149,7 @@ class FlutterNimplayer {
   /// 1: 保持比例缩放，缺少的部分使用黑边填充
   /// 2: 保持比例填充，多余的部分会被裁剪
   ///
-  /// 安卓上不支持缩放，默认为不保持比例平铺
+  /// 安卓上不支持缩放，默认为不保持比例平铺，iOS 上默认为保持比例缩放
   Future<void> setScalingMode(int scalingMode) async {
     return FlutterNimplayerFactory.methodChannel
         .invokeMethod('setScalingMode', _wrapWithPlayerId(arg: scalingMode));

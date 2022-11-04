@@ -1,6 +1,6 @@
 name: flutter_nimplayer
 description: A Flutter plugin for netease yunxin vod player. (网易云信点播播放器 SDK)
-version: 0.0.1
+version: 0.1.0
 repository: https://github.com/aJIEw/flutter_nimplayer
 
 environment:

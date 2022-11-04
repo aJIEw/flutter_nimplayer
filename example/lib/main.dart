@@ -21,9 +21,9 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   /// 播放 url
   String url =
-      'http://jdvodma74obxu.vod.126.net/jdvodma74obxu/9e4cHOd2_4901711695_hd.m3u8?'
-      'wsSecret=50882a05f5e5ad009549e248472b7f08&'
-      'wsTime=1667528025';
+      'http://jdvodma74obxu.vod.126.net/jdvodma74obxu/elyOEqRN_4973406720_sd.m3u8?'
+      'wsSecret=b316d80189ffc977e11dd1f79eaa645d&'
+      'wsTime=1667546938';
 
   /// 是否以全屏方式播放
   bool fullscreenMode = false;
@@ -57,6 +57,13 @@ class _MyAppState extends State<MyApp> {
       videoPlaying = true;
       _showVideoControlBar();
 
+      var size = await player?.getVideoSize();
+      if (size != null && size is Map) {
+        var width = size['width'];
+        var height = size['height'];
+        print('flutter_nimplayer: video width = $width, height = $height');
+      }
+
       _videoLength = await player?.getDuration();
       setState(() {
         videoTotalTime = _videoLength.millisecondsToTimeString();
@@ -85,7 +92,7 @@ class _MyAppState extends State<MyApp> {
 
         player!.setOnError((playerId, code, extra) {
           print(
-              '_MyAppState - initState: playerId = $playerId, code = $code, extra = $extra');
+              'flutter_nimplayer: playerId = $playerId, code = $code, extra = $extra');
         });
       });
     });
@@ -282,6 +289,7 @@ class _MyAppState extends State<MyApp> {
 
     player?.setPlayerView(viewId);
     player?.setUrl(url);
+    // player?.setScalingMode(1);
     player?.prepare();
   }
 

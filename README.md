@@ -2,13 +2,15 @@
 
 Flutter 版的[网易云信点播](https://doc.yunxin.163.com/vod/docs/home-page)播放器 SDK，支持 Android & iOS。
 
+[![pub package](https://img.shields.io/pub/v/flutter_nimplayer?color=blue)](https://pub.dev/packages/flutter_nimplayer)
+
 ## 开始使用
 
 添加依赖：
 
-```dart
+```yaml
 dependencies:
-  flutter_nimplayer: ^0.0.1
+  flutter_nimplayer: ^{latest_version}
 ```
 
 ## 用法
@@ -46,7 +48,7 @@ void initAndPlay(int viewId) {
 }
 ```
 
-具体示例请移步项目下的 example 文件夹，播放器接口及播放回调请查看项目源码。
+具体示例请移步项目下的 example 文件夹，更多播放器接口以及播放回调请查看项目源码。
 
 欢迎提交 issue 和 PR 帮助完善该项目。
 
